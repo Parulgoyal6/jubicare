@@ -1,0 +1,13 @@
+LoginScreen (Button click)
+        ↓
+LoginBloc (LoginSubmitted event)
+        ↓
+AuthRepository.login()
+        ↓
+ApiService.loginApi()
+        ↓
+Server Response
+        ↓
+Bloc emits Success / Failure
+        ↓
+UI updates
