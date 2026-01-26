@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:jublicare/data/services/api_service.dart';
 import 'package:jublicare/presentation/login/login_screen.dart';
 
@@ -19,6 +20,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
+      builder: FlutterSmartDialog.init(),
+      navigatorObservers: [FlutterSmartDialog.observer],
       theme: ThemeData(
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
