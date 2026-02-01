@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jublicare/common/app_colors.dart';
 
 import '../../bloc/appointments/appointments_bloc.dart';
+import '../Appointments/ListAppointments.dart';
 import '../Appointments/appointments.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -13,7 +14,7 @@ class HomeScreen extends StatelessWidget {
       "title": "Appointments",
       "icon": Icons.calendar_month,
       "color": Colors.blue,
-      "page":  Appointments(),
+      "page":  ListAppointments(),
     },
     {
       "title": "Doctor to Address Appointment",
@@ -97,17 +98,13 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: InkWell(
 
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => AppointmentsBloc(),
-                              child:item["page"],
-                            ),
-                          ),
-                        );
-
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ListAppointments(),
+                        ),
+                      );
                     },
 
                     child:Card(

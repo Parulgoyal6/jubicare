@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +14,8 @@ class Appointments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<AppointmentsBloc>();
+    final nameController = TextEditingController();
+    final classController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(title: const Text("Appointments")),
@@ -27,87 +28,111 @@ class Appointments extends StatelessWidget {
           }
 
           if (state is SubmitErrorState) {
-            SmartDialog.showToast(state.message!);
+            SmartDialog.showToast(state.message);
           }
 
           if (state is SubmitSuccessState) {
-            SmartDialog.showToast("Submitted Successfully ✅");
+            SmartDialog.dismiss();
+            Future.microtask(() {
+              Navigator.of(context).pop(true);
+            });
           }
+
         },
-        child: Column(
-          children: [
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
-            ElevatedButton(
-              onPressed: () async {
-                final res = await FilePicker.platform.pickFiles(
-                  allowMultiple: true,
-                  type: FileType.custom,
-                  allowedExtensions: ['png', 'jpg', 'jpeg'],
-                );
+              const Text("Name"),
+              TextFormField(controller: nameController),
 
-                if (res == null) return;
+              const SizedBox(height: 12),
 
-                final files = res.files
-                    .where((e) => e.path != null)
-                    .map((e) => File(e.path!))
-                    .toList();
+              const Text("Class"),
+              TextFormField(controller: classController),
 
-                bloc.add(AddImagesEvent(files));
-              },
-              child: const Text("Pick Images"),
-            ),
+              const SizedBox(height: 16),
 
-            BlocBuilder<AppointmentsBloc, AppointmentsState>(
-              builder: (context, state) {
-                List<File> images = [];
+              ElevatedButton(
+                onPressed: () async {
+                  final res = await FilePicker.platform.pickFiles(
+                    allowMultiple: true,
+                    type: FileType.custom,
+                    allowedExtensions: ['png', 'jpg', 'jpeg'],
+                  );
 
-                if (state is ImagesUpdatedState) {
-                  images = state.images;
-                }
-                else if (state is AppointmentsInitial) {
-                  images = state.images;
-                }
+                  if (res == null) return;
 
-                return Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: List.generate(images.length, (index) {
-                    return Stack(
-                      children: [
-                        Image.file(
-                          images[index],
-                          width: 90,
-                          height: 90,
-                          fit: BoxFit.cover,
-                        ),
-                        Positioned(
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () {
-                              context
-                                  .read<AppointmentsBloc>()
-                                  .add(RemoveImageEvent(index));
-                            },
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.red,
-                            ),
+                  final files = res.files
+                      .where((e) => e.path != null)
+                      .map((e) => File(e.path!))
+                      .toList();
+
+                  bloc.add(AddImagesEvent(files));
+                },
+                child: const Icon(Icons.photo, size: 40,),
+              ),
+
+              const SizedBox(height: 12),
+
+              BlocBuilder<AppointmentsBloc, AppointmentsState>(
+                builder: (context, state) {
+                  return Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(state.images.length, (index) {
+                      return Stack(
+                        children: [
+                          Image.file(
+                            state.images[index],
+                            width: 90,
+                            height: 90,
+                            fit: BoxFit.cover,
                           ),
-                        )
-                      ],
-                    );
-                  }),
-                );
-              },
-            ),
+                          Positioned(
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () {
+                                context
+                                    .read<AppointmentsBloc>()
+                                    .add(RemoveImageEvent(index));
+                              },
+                              child: const Icon(Icons.close, color: Colors.red),
+                            ),
+                          )
+                        ],
+                      );
+                    }),
+                  );
+                },
+              ),
 
-            ElevatedButton(
-              onPressed: () {
-                bloc.add(SubmitImagesEvent());
-              },
-              child: const Text("Submit"),
-            ),
-          ],
+              const Spacer(),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (nameController.text.isEmpty ||
+                        classController.text.isEmpty) {
+                      SmartDialog.showToast("Fill all fields");
+                      return;
+                    }
+
+                    bloc.add(
+                      SubmitImagesEvent(
+                        name: nameController.text.trim(),
+                        className: classController.text.trim(),
+                      ),
+                    );
+                  },
+                  child: const Text("Submit"),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

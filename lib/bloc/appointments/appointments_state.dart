@@ -2,31 +2,26 @@ import 'dart:io';
 
 abstract class AppointmentsState {
   final List<File> images;
-  const AppointmentsState({this.images = const []});
+  const AppointmentsState(this.images);
 }
 
-// Initial
 class AppointmentsInitial extends AppointmentsState {
-  const AppointmentsInitial() : super(images: const []);
+  const AppointmentsInitial({List<File> images = const []}) : super(images);
 }
 
-// Images updated
 class ImagesUpdatedState extends AppointmentsState {
-  const ImagesUpdatedState(List<File> images) : super(images: images);
+  const ImagesUpdatedState(List<File> images) : super(images);
 }
 
-// Loading
 class SubmitLoadingState extends AppointmentsState {
-  const SubmitLoadingState(List<File> images) : super(images: images);
+  const SubmitLoadingState(List<File> images) : super(images);
 }
 
-// Success
 class SubmitSuccessState extends AppointmentsState {
-  const SubmitSuccessState() : super();
+  const SubmitSuccessState() : super(const []);
 }
 
-// Error
 class SubmitErrorState extends AppointmentsState {
   final String message;
-  const SubmitErrorState(this.message) : super();
+  const SubmitErrorState(this.message, List<File> images) : super(images);
 }

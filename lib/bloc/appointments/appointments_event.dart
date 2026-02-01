@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 abstract class AppointmentsEvent {}
@@ -13,4 +12,12 @@ class RemoveImageEvent extends AppointmentsEvent {
   RemoveImageEvent(this.index);
 }
 
-class SubmitImagesEvent extends AppointmentsEvent {}
+class SubmitImagesEvent extends AppointmentsEvent {
+  final String name;
+  final String className;
+
+  SubmitImagesEvent({
+    required this.name,
+    required this.className,
+  });
+}

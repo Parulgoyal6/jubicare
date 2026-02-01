@@ -5,13 +5,10 @@ import 'package:jublicare/common/databaseHelper.dart';
 import 'appointments_event.dart';
 import 'appointments_state.dart';
 
+class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
+  final List<File> _images = [];
 
-class AppointmentsBloc
-    extends Bloc<AppointmentsEvent, AppointmentsState> {
-
-  List<File> _images = [];
-
-  AppointmentsBloc() : super(AppointmentsInitial()) {
+  AppointmentsBloc() : super(const AppointmentsInitial()) {
 
     on<AddImagesEvent>((event, emit) {
       _images.addAll(event.images);
@@ -26,17 +23,20 @@ class AppointmentsBloc
     on<SubmitImagesEvent>((event, emit) async {
       emit(SubmitLoadingState(List.from(_images)));
 
-
       try {
-        for (int i = 0; i < _images.length; i++) {
+        for (final img in _images) {
           await Databasehelper.instance.insertData({
-            "image": _images[i].path,
-          }, "Data");
+            "name": event.name,
+            "className": event.className,
+            "image": img.path,
+          }, "Appointments");
         }
 
-        emit(SubmitSuccessState());
+        _images.clear();
+        emit(const SubmitSuccessState());
+        emit(const AppointmentsInitial());
       } catch (e) {
-        emit(SubmitErrorState(e.toString()));
+        emit(SubmitErrorState(e.toString(), List.from(_images)));
       }
     });
   }

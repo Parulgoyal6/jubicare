@@ -47,4 +47,10 @@ Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     return await db!.insert(table, mapList);
   }
 
+ Future<List<Imagepojo>> getData(String query) async {
+   Database? db = await database;
+    List<Map<String, dynamic>> resultMap = await db!.rawQuery(query);
+    return resultMap.map((f) => Imagepojo.fromMap(f)).toList();
+}
+
 }
